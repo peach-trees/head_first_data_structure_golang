@@ -42,9 +42,9 @@ func (h *HashTableBase) Init(capacity uint32) {
 
 func (h *HashTableBase) CalculateLoad() float64 {
 	if h.Capacity == 0 {
-		return 0
+		return 1.0
 	}
-	return float64(h.Size) / float64(h.Size)
+	return float64(h.Size) / float64(h.Capacity)
 }
 
 func (h *HashTableBase) HashFunc(key interface{}, hash hash.Hash) *big.Int {
