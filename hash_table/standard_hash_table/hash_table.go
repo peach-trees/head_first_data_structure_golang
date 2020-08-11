@@ -4,10 +4,10 @@ type HashTable struct {
 	data map[interface{}]interface{}
 }
 
-func NewHashTable() *HashTable {
-	return &HashTable{
-		data: make(map[interface{}]interface{}),
-	}
+func NewHashTable(capacity uint) *HashTable {
+	ret := &HashTable{}
+	ret.Init(capacity)
+	return ret
 }
 
 func (h *HashTable) Init(capacity uint) {
