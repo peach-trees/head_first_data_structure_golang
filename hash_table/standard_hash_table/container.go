@@ -1,23 +1,23 @@
-package hash_map
+package standard_hash_table
 
 import (
 	"bytes"
 	"fmt"
 )
 
-func (h *HashMap) Size() int {
+func (h *HashTable) Size() int {
 	return len(h.data)
 }
 
-func (h *HashMap) IsEmpty() bool {
+func (h *HashTable) IsEmpty() bool {
 	return len(h.data) == 0
 }
 
-func (h *HashMap) Reset() {
+func (h *HashTable) Reset() {
 	h.data = make(map[interface{}]interface{})
 }
 
-func (h *HashMap) Values() []interface{} {
+func (h *HashTable) Values() []interface{} {
 	values := make([]interface{}, 0, h.Size())
 	for _, v := range h.data {
 		values = append(values, v)
@@ -25,8 +25,8 @@ func (h *HashMap) Values() []interface{} {
 	return values
 }
 
-func (h *HashMap) String() string {
-	bufStr := bytes.NewBufferString("[HashMap]")
+func (h *HashTable) String() string {
+	bufStr := bytes.NewBufferString("[HashTable]")
 	bufStr.WriteString(fmt.Sprintf("%+v", h.data))
 	return bufStr.String()
 }
