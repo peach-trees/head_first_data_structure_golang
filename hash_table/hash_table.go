@@ -18,8 +18,8 @@ type HashTable interface {
 }
 
 const (
-	DefaultCapacity   = 8
-	DefaultLoadFactor = 0.75
+	defaultCapacity   = 8
+	defaultLoadFactor = 0.75
 )
 
 type hashTableBase struct {
@@ -49,9 +49,9 @@ func (h *hashTableBase) HashFunc(key interface{}, hash hash.Hash) *big.Int {
 }
 
 func (h *hashTableBase) UpScale() {
-	if h.CalculateLoad() >= DefaultLoadFactor {
+	if h.CalculateLoad() >= defaultLoadFactor {
 		if h.Capacity == 0 {
-			h.HashTable.Init(DefaultCapacity)
+			h.HashTable.Init(defaultCapacity)
 		} else {
 			h.Move(h.Capacity << 1)
 		} // else>>
