@@ -3,7 +3,6 @@ package list
 import "head_first_data_structure_golang/common"
 
 type List interface {
-	common.Container
 	Get(index int) (interface{}, bool)
 	Set(index int, value interface{})
 	Delete(index int)

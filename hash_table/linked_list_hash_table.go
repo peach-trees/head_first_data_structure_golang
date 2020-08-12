@@ -11,17 +11,23 @@ type LinkedListHashTable struct {
 	buckets []*list.List
 }
 
+func NewLinkedListHashTable() *LinkedListHashTable {
+	h := new(LinkedListHashTable)
+	h.HashTableBase.HashTable = h
+	return h
+}
+
 // --- inner func ---
 func (l *LinkedListHashTable) hash(key interface{}) uint32 {
 	hashValue := l.HashFunc(key, sha1.New())
-	mb := big.NewInt(int64(l.Capacity))
-	hashValue.Mod(hashValue, mb)
+	capacityValue := big.NewInt(int64(l.Capacity))
+	hashValue.Mod(hashValue, capacityValue)
 	return uint32(hashValue.Uint64())
 }
 
 func (l *LinkedListHashTable) findInList(key interface{}, list *list.List) (*list.Element, bool) {
 	for element := list.Front(); element != nil; element = element.Next() {
-		if element.Value.(HashTableElement).Key == key {
+		if element.Value.(hashTableElement).Key == key {
 			return element, true
 		} // if>>
 	} // for>
@@ -44,7 +50,7 @@ func (l *LinkedListHashTable) Move(capacity uint32) {
 	for _, tempList := range oldBuckets {
 		if tempList != nil {
 			for cur := tempList.Front(); cur != nil; cur = cur.Next() {
-				l.Put(cur.Value.(HashTableElement).Key, cur.Value.(HashTableElement).Value)
+				l.Put(cur.Value.(hashTableElement).Key, cur.Value.(hashTableElement).Value)
 			} // for>>>
 		} // if>>
 	} // for>
@@ -56,7 +62,7 @@ func (l *LinkedListHashTable) Put(key interface{}, value interface{}) {
 	if l.buckets[hashKey] == nil {
 		l.buckets[hashKey] = list.New()
 	} // if>
-	element := HashTableElement{
+	element := hashTableElement{
 		Key:   key,
 		Value: value,
 	}
@@ -70,13 +76,31 @@ func (l *LinkedListHashTable) Put(key interface{}, value interface{}) {
 }
 
 func (l *LinkedListHashTable) Get(key interface{}) (interface{}, bool) {
-
+	if l.Size == 0 {
+		return nil, false
+	}
+	hashKey := l.hash(key)
+	if l.buckets[hashKey] == nil {
+		return nil, false
+	}
+	listElement, exists := l.findInList(hashKey, l.buckets[hashKey])
+	if exists {
+		return listElement.Value.(hashTableElement).Value, true
+	}
+	return nil, false
 }
 
 func (l *LinkedListHashTable) Delete(key interface{}) {
-
-}
-
-func (l *LinkedListHashTable) Keys() []interface{} {
-
+	hashKey := l.hash(key)
+	if l.buckets[hashKey] == nil {
+		return
+	}
+	listElement, exists := l.findInList(key, l.buckets[hashKey])
+	if exists {
+		l.buckets[hashKey].Remove(listElement)
+	}
+	if l.buckets[hashKey].Len() == 0 {
+		l.buckets[hashKey] = nil
+		l.Size--
+	}
 }

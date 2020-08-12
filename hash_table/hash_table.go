@@ -8,13 +8,12 @@ import (
 	"math/big"
 )
 
-type HashTableElement struct {
+type hashTableElement struct {
 	Key   interface{}
 	Value interface{}
 }
 
 type HashTable interface {
-	common.Container
 	Init(capacity uint32)
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (interface{}, bool)
