@@ -22,8 +22,7 @@ type HashTable interface {
 	Keys() []interface{}
 
 	UpScale()
-	DownScale()
-	Move(uint32)
+	Move(capacity uint32)
 }
 
 const (
