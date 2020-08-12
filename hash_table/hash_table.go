@@ -4,21 +4,14 @@ import (
 	"bytes"
 	"encoding/gob"
 	"hash"
-	"head_first_data_structure_golang/common"
 	"math/big"
 )
-
-type hashTableElement struct {
-	Key   interface{}
-	Value interface{}
-}
 
 type HashTable interface {
 	Init(capacity uint32)
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (interface{}, bool)
 	Delete(key interface{})
-	Keys() []interface{}
 
 	UpScale()
 	Move(capacity uint32)
@@ -29,25 +22,25 @@ const (
 	DefaultLoadFactor = 0.75
 )
 
-type HashTableBase struct {
+type hashTableBase struct {
 	HashTable
 	Capacity uint32
 	Size     uint32
 }
 
-func (h *HashTableBase) Init(capacity uint32) {
+func (h *hashTableBase) Init(capacity uint32) {
 	h.Capacity = capacity
 	h.Size = 0
 }
 
-func (h *HashTableBase) CalculateLoad() float64 {
+func (h *hashTableBase) CalculateLoad() float64 {
 	if h.Capacity == 0 {
 		return 1.0
 	}
 	return float64(h.Size) / float64(h.Capacity)
 }
 
-func (h *HashTableBase) HashFunc(key interface{}, hash hash.Hash) *big.Int {
+func (h *hashTableBase) HashFunc(key interface{}, hash hash.Hash) *big.Int {
 	buf := bytes.NewBuffer(nil)
 	enc := gob.NewEncoder(buf)
 	_ = enc.Encode(key)
@@ -55,7 +48,7 @@ func (h *HashTableBase) HashFunc(key interface{}, hash hash.Hash) *big.Int {
 	return new(big.Int).SetBytes(hashBytes)
 }
 
-func (h *HashTableBase) UpScale() {
+func (h *hashTableBase) UpScale() {
 	if h.CalculateLoad() >= DefaultLoadFactor {
 		if h.Capacity == 0 {
 			h.HashTable.Init(DefaultCapacity)

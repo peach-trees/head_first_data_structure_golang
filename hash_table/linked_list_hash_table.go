@@ -6,14 +6,19 @@ import (
 	"math/big"
 )
 
+type linkedListElement struct {
+	Key   interface{}
+	Value interface{}
+}
+
 type LinkedListHashTable struct {
-	HashTableBase
+	hashTableBase
 	buckets []*list.List
 }
 
 func NewLinkedListHashTable() *LinkedListHashTable {
 	h := new(LinkedListHashTable)
-	h.HashTableBase.HashTable = h
+	h.hashTableBase.HashTable = h
 	return h
 }
 
@@ -27,7 +32,7 @@ func (l *LinkedListHashTable) hash(key interface{}) uint32 {
 
 func (l *LinkedListHashTable) findInList(key interface{}, list *list.List) (*list.Element, bool) {
 	for element := list.Front(); element != nil; element = element.Next() {
-		if element.Value.(hashTableElement).Key == key {
+		if element.Value.(linkedListElement).Key == key {
 			return element, true
 		} // if>>
 	} // for>
@@ -36,7 +41,7 @@ func (l *LinkedListHashTable) findInList(key interface{}, list *list.List) (*lis
 
 // --- interface func ---
 func (l *LinkedListHashTable) Init(capacity uint32) {
-	l.HashTableBase.Init(capacity)
+	l.hashTableBase.Init(capacity)
 	if capacity == 0 {
 		l.buckets = nil
 	} else {
@@ -50,7 +55,7 @@ func (l *LinkedListHashTable) Move(capacity uint32) {
 	for _, tempList := range oldBuckets {
 		if tempList != nil {
 			for cur := tempList.Front(); cur != nil; cur = cur.Next() {
-				l.Put(cur.Value.(hashTableElement).Key, cur.Value.(hashTableElement).Value)
+				l.Put(cur.Value.(linkedListElement).Key, cur.Value.(linkedListElement).Value)
 			} // for>>>
 		} // if>>
 	} // for>
@@ -62,7 +67,7 @@ func (l *LinkedListHashTable) Put(key interface{}, value interface{}) {
 	if l.buckets[hashKey] == nil {
 		l.buckets[hashKey] = list.New()
 	} // if>
-	element := hashTableElement{
+	element := linkedListElement{
 		Key:   key,
 		Value: value,
 	}
@@ -85,7 +90,7 @@ func (l *LinkedListHashTable) Get(key interface{}) (interface{}, bool) {
 	}
 	listElement, exists := l.findInList(hashKey, l.buckets[hashKey])
 	if exists {
-		return listElement.Value.(hashTableElement).Value, true
+		return listElement.Value.(linkedListElement).Value, true
 	}
 	return nil, false
 }
