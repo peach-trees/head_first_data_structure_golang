@@ -49,7 +49,7 @@ func (d *Dequeue) PeekFront() interface{} {
 }
 
 // prev returns the previous buffer position wrapping around buffer.
-func (q *Dequeue) prev(i int) int {
+func (d *Dequeue) prev(i int) int {
 	return (i - 1) & (len(q.data) - 1) // bitwise modulus
 }
 
