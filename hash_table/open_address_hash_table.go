@@ -77,9 +77,25 @@ func (o *OpenAddressHashTable) Put(key interface{}, value interface{}) {
 }
 
 func (o *OpenAddressHashTable) Get(key interface{}) (interface{}, bool) {
-
+	if o.Size == 0 {
+		return nil, false
+	}
+	for i := 0; i < int(o.Capacity); i++ {
+		hashValue := o.hash(key, uint32(i))
+		if o.buckets[hashValue] != nil && o.buckets[hashValue].Key == key {
+			return o.buckets[hashValue].Value, o.buckets[hashValue].exists
+		} // if>>
+	} // for>
+	return nil, false
 }
 
 func (o *OpenAddressHashTable) Delete(key interface{}) {
-
+	for i := 0; i < int(o.Capacity); i++ {
+		hashValue := o.hash(key, uint32(i))
+		if o.buckets[hashValue] != nil && o.buckets[hashValue].Key == key {
+			o.buckets[hashValue] = &openAddressElement{exists: false}
+			o.Size--
+			return
+		} // if>>
+	} // for>
 }
