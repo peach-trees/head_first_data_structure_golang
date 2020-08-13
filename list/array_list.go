@@ -1,6 +1,10 @@
 package list
 
-import "head_first_data_structure_golang/common"
+import (
+	"bytes"
+	"fmt"
+	"head_first_data_structure_golang/common"
+)
 
 type ArrayList struct {
 	data []interface{}
@@ -105,4 +109,20 @@ func (a *ArrayList) Size() int {
 func (a *ArrayList) Reset() {
 	a.size = 0
 	a.data = make([]interface{}, 0)
+}
+
+func (a *ArrayList) String() string {
+	retBytes := bytes.NewBufferString("[ArrayList]")
+	for _, v := range a.data {
+		retBytes.WriteString(fmt.Sprintf("->%+v", v))
+	}
+	return retBytes.String()
+}
+
+func NewArrayList(values ...interface{}) *ArrayList {
+	list := &ArrayList{size: 0, data: make([]interface{}, 0)}
+	if len(values) > 0 {
+		list.Append(values...)
+	}
+	return list
 }
