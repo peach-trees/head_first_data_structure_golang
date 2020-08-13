@@ -1,6 +1,9 @@
 package list
 
-import "testing"
+import (
+	"head_first_data_structure_golang/common"
+	"testing"
+)
 
 func TestArrayList_Append(t *testing.T) {
 	tl := NewArrayList(1, 2, 3)
@@ -21,5 +24,14 @@ func TestArrayList_Prepend(t *testing.T) {
 	t.Log(tl.String())
 
 	tl.Prepend('x', 'y', 'z')
+	t.Log(tl.String())
+}
+
+func TestArrayList_Sort(t *testing.T) {
+	tl := NewArrayList(1, 2, 3)
+	tl.Append(11, 10, 9)
+	tl.Prepend(5, 6, 7)
+	t.Log(tl.String())
+	tl.Sort(common.IntComparator)
 	t.Log(tl.String())
 }
