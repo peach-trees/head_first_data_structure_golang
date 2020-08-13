@@ -16,7 +16,7 @@ func (a *ArrayList) checkIndex(index int) bool {
 }
 
 func (a *ArrayList) resize(capacity int) {
-	newData := make([]interface{}, 0, capacity)
+	newData := make([]interface{}, capacity, capacity)
 	copy(newData, a.data)
 	a.data = newData
 }
@@ -113,8 +113,8 @@ func (a *ArrayList) Reset() {
 
 func (a *ArrayList) String() string {
 	retBytes := bytes.NewBufferString("[ArrayList]")
-	for _, v := range a.data {
-		retBytes.WriteString(fmt.Sprintf("->%+v", v))
+	for i := 0; i < a.size; i++ {
+		retBytes.WriteString(fmt.Sprintf("->%+v", a.data[i]))
 	}
 	return retBytes.String()
 }
