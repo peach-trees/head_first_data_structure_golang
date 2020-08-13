@@ -1,5 +1,7 @@
 package list
 
+import "head_first_data_structure_golang/common"
+
 type ArrayList struct {
 	data []interface{}
 	size int
@@ -17,7 +19,7 @@ func (a *ArrayList) resize(capacity int) {
 
 func (a *ArrayList) upScale(newDataLen int) {
 	currentCapacity := cap(a.data)
-	if a.size + newDataLen >= currentCapacity {
+	if a.size+newDataLen >= currentCapacity {
 		newCapacity := (currentCapacity + newDataLen) << 1
 		a.resize(newCapacity)
 	} // if>
@@ -47,7 +49,10 @@ func (a *ArrayList) Get(index int) (interface{}, bool) {
 }
 
 func (a *ArrayList) Set(index int, value interface{}) {
-
+	if !a.checkIndex(index) {
+		return
+	} // if>
+	a.data[index] = value
 }
 
 func (a *ArrayList) Delete(index int) {
@@ -60,7 +65,14 @@ func (a *ArrayList) Delete(index int) {
 }
 
 func (a *ArrayList) Insert(index int, values ...interface{}) {
-
+	if !a.checkIndex(index) {
+		return
+	} // if>
+	newValueLen := len(values)
+	a.upScale(newValueLen)
+	a.size += newValueLen
+	copy(a.data[index+newValueLen:], a.data[index:a.size-newValueLen])
+	copy(a.data[index:], values)
 }
 
 func (a *ArrayList) IndexOf(value interface{}) int {
@@ -75,7 +87,22 @@ func (a *ArrayList) IndexOf(value interface{}) int {
 	return -1
 }
 
-Sort(comparator common.Comparator)
-Empty() bool
-Size() int
-Clear()
+func (a *ArrayList) Sort(comparator common.Comparator) {
+	if len(a.data) <= 1 {
+		return
+	}
+	common.Sort(a.data[:a.size], comparator)
+}
+
+func (a *ArrayList) IfEmpty() bool {
+	return a.size == 0
+}
+
+func (a *ArrayList) Size() int {
+	return a.size
+}
+
+func (a *ArrayList) Reset() {
+	a.size = 0
+	a.data = make([]interface{}, 0)
+}
