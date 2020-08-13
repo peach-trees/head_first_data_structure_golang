@@ -11,4 +11,8 @@ type List interface {
 	Insert(index int, values ...interface{})
 	IndexOf(value interface{}) int
 	Sort(comparator common.Comparator)
+	Empty() bool
+	Size() int
+	Clear()
+	String() string
 }

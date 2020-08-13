@@ -41,6 +41,10 @@ func (d *Dequeue) PopFront() interface{} {
 	return ret
 }
 
+func (d *Dequeue) PushFront(value interface{}) {
+
+}
+
 func (d *Dequeue) PeekFront() interface{} {
 	if d.size <= 0 {
 		return nil
@@ -50,7 +54,7 @@ func (d *Dequeue) PeekFront() interface{} {
 
 // prev returns the previous buffer position wrapping around buffer.
 func (d *Dequeue) prev(i int) int {
-	return (i - 1) & (len(q.data) - 1) // bitwise modulus
+	return (i - 1) & (len(d.data) - 1) // bitwise modulus
 }
 
 // next returns the next buffer position wrapping around buffer.
