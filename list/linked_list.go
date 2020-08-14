@@ -22,7 +22,17 @@ func (l *LinkedList) checkIndex(index int) bool {
 }
 
 func (l *LinkedList) Get(index int) (interface{}, bool) {
-
+	if !l.checkIndex(index) {
+		return nil, false
+	}
+	cur := l.first
+	for i := 0; i < index && cur != nil; i++ {
+		cur = cur.next
+	}
+	if cur != nil {
+		return cur.data, true
+	}
+	return nil, false
 }
 
 func (l *LinkedList) Set(index int, value interface{}) {
@@ -71,11 +81,28 @@ func (l *LinkedList) Delete(index int) {
 }
 
 func (l *LinkedList) Append(values ...interface{}) {
-
+	for i := range values {
+		newData := &LinkedListNode{data: values[i]}
+		if l.size == 0 {
+			l.first = newData
+			l.last = newData
+		} else {
+			l.last.next = newData
+			l.last = newData
+		} // else>>
+		l.size++
+	} // for>
 }
 
 func (l *LinkedList) Prepend(values ...interface{}) {
-
+	for i := len(values) - 1; i >= 0; i-- {
+		newNode := &LinkedListNode{data: values[i], next: l.first}
+		if l.size == 0 {
+			l.last = newNode
+		} // if>>
+		l.first = newNode
+		l.size++
+	} // for>
 }
 
 func (l *LinkedList) Insert(index int, values ...interface{}) {
@@ -162,5 +189,13 @@ func (l *LinkedList) String() string {
 }
 
 func NewLinkedList(values ...interface{}) *LinkedList {
-	return nil
+	list := &LinkedList{
+		first: nil,
+		last:  nil,
+		size:  0,
+	}
+	if len(values) > 0 {
+		list.Append(values...)
+	}
+	return list
 }
