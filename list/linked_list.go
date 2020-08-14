@@ -39,7 +39,32 @@ func (l *LinkedList) Set(index int, value interface{}) {
 }
 
 func (l *LinkedList) Delete(index int) {
+	if !l.checkIndex(index) {
+		return
+	}
+	if l.size == 1 {
+		l.Reset()
+		return
+	}
 
+	var pre, cur *LinkedListNode
+	cur = l.first
+	for i := 0; i < index && cur != nil; i++ {
+		pre = cur
+		cur = cur.next
+	} // for>
+
+	if cur == l.first {
+		l.first = l.first.next
+	}
+	if cur == l.last {
+		l.last = pre
+	}
+	if pre != nil {
+		pre.next = cur.next
+	}
+	cur = nil
+	l.size--
 }
 
 func (l *LinkedList) Append(values ...interface{}) {
@@ -82,14 +107,27 @@ func (l *LinkedList) Insert(index int, values ...interface{}) {
 }
 
 func (l *LinkedList) IndexOf(value interface{}) int {
-
+	if l.size == 0 {
+		return -1
+	}
+	var index int
+	for cur := l.first; cur != nil; cur = cur.next {
+		if cur.data == value {
+			return index
+		} // if>>
+		index++
+	} // for>
+	return -1
 }
 
 func (l *LinkedList) Sort(comparator common.Comparator) {
 	if l.size <= 1 {
 		return
 	}
-
+	values := l.Values()
+	common.Sort(values, comparator)
+	l.Reset()
+	l.Append(values...)
 }
 
 func (l *LinkedList) IfEmpty() bool {
@@ -97,11 +135,19 @@ func (l *LinkedList) IfEmpty() bool {
 }
 
 func (l *LinkedList) Size() int {
-
+	return l.size
 }
 
 func (l *LinkedList) Reset() {
+	l.size, l.first, l.last = 0, nil, nil
+}
 
+func (l *LinkedList) Values() []interface{} {
+	ret := make([]interface{}, 0, l.size)
+	for cur := l.first; cur != nil; cur = cur.next {
+		ret = append(ret, cur.data)
+	}
+	return ret
 }
 
 func (l *LinkedList) String() string {
