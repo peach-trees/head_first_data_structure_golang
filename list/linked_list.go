@@ -53,6 +53,9 @@ func (l *LinkedList) Delete(index int) {
 		pre = cur
 		cur = cur.next
 	} // for>
+	if cur == nil {
+		return
+	}
 
 	if cur == l.first {
 		l.first = l.first.next
