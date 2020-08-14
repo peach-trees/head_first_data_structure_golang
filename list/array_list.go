@@ -79,6 +79,18 @@ func (a *ArrayList) Insert(index int, values ...interface{}) {
 	copy(a.data[index:], values)
 }
 
+func (a *ArrayList) InsertOne(index int, value interface{}) {
+	if !a.checkIndex(index) {
+		return
+	} // if>
+	a.upScale(1)
+	for i := a.size - 1; i >= index; i-- {
+		a.data[i+1] = a.data[i]
+	} // for>
+	a.data[index] = value
+	a.size++
+}
+
 func (a *ArrayList) IndexOf(value interface{}) int {
 	if a.size == 0 {
 		return -1

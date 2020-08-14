@@ -35,3 +35,12 @@ func TestArrayList_Sort(t *testing.T) {
 	tl.Sort(common.IntComparator)
 	t.Log(tl.String())
 }
+
+func TestArrayList_Insert(t *testing.T) {
+	tl := NewArrayList(1, 2, 3)
+	t.Log(tl.String())
+	tl.Insert(1, 5, 6)
+	t.Log(tl.String())
+	tl.Insert(0, 7, 8)
+	t.Log(tl.String())
+}

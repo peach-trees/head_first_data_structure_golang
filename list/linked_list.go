@@ -30,10 +30,12 @@ func (l *LinkedList) Set(index int, value interface{}) {
 		return
 	}
 	cur := l.first
-	for i := 0; i < index; i++ {
+	for i := 0; i < index && cur != nil; i++ {
 		cur = cur.next
 	}
-	cur.data = value
+	if cur != nil {
+		cur.data = value
+	}
 }
 
 func (l *LinkedList) Delete(index int) {
