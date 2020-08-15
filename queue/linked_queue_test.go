@@ -19,7 +19,7 @@ func TestNewLinkedQueue(t *testing.T) {
 		t.Log("tail:")
 		t.Log(aq.Tail())
 		v, _ := aq.Dequeue()
-		t.Log("Dequeue:", v)
+		t.Log("CircularQueue:", v)
 		t.Log(aq.String())
 	}
 	t.Log(strings.Repeat("-", 30))
@@ -28,7 +28,7 @@ func TestNewLinkedQueue(t *testing.T) {
 	t.Log("tail:")
 	t.Log(aq.Tail())
 	v, _ := aq.Dequeue()
-	t.Log("Dequeue:", v)
+	t.Log("CircularQueue:", v)
 	t.Log(aq.String())
 
 	t.Log(strings.Repeat("-", 30))
