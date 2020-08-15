@@ -1,87 +1,62 @@
 package queue
 
-type Dequeue struct {
-	head     int
-	tail     int
-	size     int
-	capacity int
-	data     []interface{}
+import (
+	"bytes"
+	"fmt"
+)
+
+type ArrayQueue struct {
+	data []interface{}
 }
 
-func (d *Dequeue) Size() int {
-	return d.size
+func NewArrayQueue() *ArrayQueue {
+	return &ArrayQueue{data: make([]interface{}, 0)}
 }
 
-func (d *Dequeue) IsEmpty() bool {
-	return d.size == 0
+func (a *ArrayQueue) IfEmpty() bool {
+	return len(a.data) == 0
 }
 
-func (d *Dequeue) PushBack(value interface{}) {
-	d.upScale()
-	d.data[d.tail] = value
-	d.tail = d.next(d.tail)
-	d.size++
+func (a *ArrayQueue) Size() int {
+	return len(a.data)
 }
 
-func (d *Dequeue) PeekBack() interface{} {
-	if d.size <= 0 {
-		return nil
+func (a *ArrayQueue) Reset() {
+	a.data = make([]interface{}, 0)
+}
+
+func (a *ArrayQueue) String() string {
+	retBytes := bytes.NewBufferString("[Queue-head]")
+	for i := range a.data {
+		retBytes.WriteString(fmt.Sprintf("->%+v", a.data[i]))
 	}
-	return d.data[d.head]
+	retBytes.WriteString("->[Queue-tail]")
+	return retBytes.String()
 }
 
-func (d *Dequeue) PopFront() interface{} {
-	if d.size <= 0 {
-		return nil
+func (a *ArrayQueue) Enqueue(value interface{}) {
+	a.data = append(a.data, value)
+}
+
+func (a *ArrayQueue) Dequeue() (interface{}, bool) {
+	if len(a.data) == 0 {
+		return nil, false
 	}
-	ret := d.data[d.head]
-	d.data[d.head] = nil
-	d.head = d.next(d.head)
-	d.size--
-	return ret
+	ret := a.data[0]
+	a.data = a.data[1:]
+	return ret, true
 }
 
-func (d *Dequeue) PushFront(value interface{}) {
-
-}
-
-func (d *Dequeue) PeekFront() interface{} {
-	if d.size <= 0 {
-		return nil
+func (a *ArrayQueue) Head() (interface{}, bool) {
+	if len(a.data) == 0 {
+		return nil, false
 	}
-	return d.data[d.prev(d.tail)]
+	return a.data[0], true
 }
 
-// prev returns the previous buffer position wrapping around buffer.
-func (d *Dequeue) prev(i int) int {
-	return (i - 1) & (len(d.data) - 1) // bitwise modulus
-}
-
-// next returns the next buffer position wrapping around buffer.
-func (d *Dequeue) next(i int) int {
-	return (i + 1) & (len(d.data) - 1)
-}
-
-func (d *Dequeue) upScale() {
-	if len(d.data) == 0 {
-		if d.capacity == 0 {
-			d.capacity = defaultCapacity
-		} // if>>
-		d.data = make([]interface{}, d.capacity)
-		return
-	} // if>
-	if d.size == len(d.data) {
-		d.resize()
-	} // if>
-}
-
-func (d *Dequeue) resize() {
-	newBuf := make([]interface{}, d.size<<1)
-	if d.tail > d.head {
-		copy(newBuf, d.data[d.head:d.tail])
-	} else {
-		n := copy(newBuf, d.data[d.head:])
-		copy(newBuf[n:], d.data[:d.tail])
-	} // else>
-	d.head, d.tail, d.data = 0, d.size, newBuf
+func (a *ArrayQueue) Tail() (interface{}, bool) {
+	if len(a.data) == 0 {
+		return nil, false
+	}
+	return a.data[len(a.data)-1], true
 }

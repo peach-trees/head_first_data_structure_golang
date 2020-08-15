@@ -1,12 +1,14 @@
 package queue
 
 type Queue interface {
+	IfEmpty() bool
 	Size() int
-	IsEmpty() bool
-	PushBack(interface{})
-	PeekBack() interface{}
-	PopFront() interface{}
-	PeekFront() interface{}
+	Reset()
+	String() string
+	Enqueue(interface{})
+	Dequeue() (interface{}, bool)
+	Head() (interface{}, bool)
+	Tail() (interface{}, bool)
 }
 
 const (
