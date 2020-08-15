@@ -1,16 +1,13 @@
 package list
 
-import "head_first_data_structure_golang/common"
-
 type List interface {
 	Get(index int) (interface{}, bool)
 	Set(index int, value interface{})
 	Delete(index int)
 	Append(values ...interface{})
 	Prepend(values ...interface{})
-	Insert(index int, values ...interface{})
+	Insert(index int, value interface{})
 	IndexOf(value interface{}) int
-	Sort(comparator common.Comparator)
 	IfEmpty() bool
 	Size() int
 	Reset()

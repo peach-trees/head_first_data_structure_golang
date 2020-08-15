@@ -3,7 +3,6 @@ package list
 import (
 	"bytes"
 	"fmt"
-	"head_first_data_structure_golang/common"
 )
 
 type ArrayList struct {
@@ -11,21 +10,25 @@ type ArrayList struct {
 	size int
 }
 
-func (a *ArrayList) checkIndex(index int) bool {
-	return index >= 0 && index < a.size
+func NewArrayList(values ...interface{}) *ArrayList {
+	list := &ArrayList{size: 0, data: make([]interface{}, 0)}
+	if len(values) > 0 {
+		list.Append(values...)
+	}
+	return list
 }
 
-func (a *ArrayList) resize(capacity int) {
-	newData := make([]interface{}, capacity, capacity)
-	copy(newData, a.data)
-	a.data = newData
+func (a *ArrayList) checkIndex(index int) bool {
+	return index >= 0 && index < a.size
 }
 
 func (a *ArrayList) upScale(newDataLen int) {
 	currentCapacity := cap(a.data)
 	if a.size+newDataLen >= currentCapacity {
 		newCapacity := (currentCapacity + newDataLen) << 1
-		a.resize(newCapacity)
+		newData := make([]interface{}, newCapacity, newCapacity)
+		copy(newData, a.data)
+		a.data = newData
 	} // if>
 }
 
@@ -63,23 +66,11 @@ func (a *ArrayList) Delete(index int) {
 	if !a.checkIndex(index) {
 		return
 	}
-	a.data[index] = nil
 	copy(a.data[index:], a.data[index+1:a.size])
 	a.size--
 }
 
-func (a *ArrayList) Insert(index int, values ...interface{}) {
-	if !a.checkIndex(index) {
-		return
-	} // if>
-	newValueLen := len(values)
-	a.upScale(newValueLen)
-	a.size += newValueLen
-	copy(a.data[index+newValueLen:], a.data[index:a.size-newValueLen])
-	copy(a.data[index:], values)
-}
-
-func (a *ArrayList) InsertOne(index int, value interface{}) {
+func (a *ArrayList) Insert(index int, value interface{}) {
 	if !a.checkIndex(index) {
 		return
 	} // if>
@@ -103,13 +94,6 @@ func (a *ArrayList) IndexOf(value interface{}) int {
 	return -1
 }
 
-func (a *ArrayList) Sort(comparator common.Comparator) {
-	if len(a.data) <= 1 {
-		return
-	}
-	common.Sort(a.data[:a.size], comparator)
-}
-
 func (a *ArrayList) IfEmpty() bool {
 	return a.size == 0
 }
@@ -129,12 +113,4 @@ func (a *ArrayList) String() string {
 		retBytes.WriteString(fmt.Sprintf("->%+v", a.data[i]))
 	}
 	return retBytes.String()
-}
-
-func NewArrayList(values ...interface{}) *ArrayList {
-	list := &ArrayList{size: 0, data: make([]interface{}, 0)}
-	if len(values) > 0 {
-		list.Append(values...)
-	}
-	return list
 }
