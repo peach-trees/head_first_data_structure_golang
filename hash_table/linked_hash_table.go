@@ -8,7 +8,7 @@ import (
 	"math/big"
 )
 
-type node struct {
+type linkedNode struct {
 	Key   interface{}
 	Value interface{}
 }
@@ -47,7 +47,7 @@ func (l *LinkedHashTable) hash(key interface{}) uint32 {
 
 func (l *LinkedHashTable) findInList(key interface{}, list *list.List) (*list.Element, bool) {
 	for element := list.Front(); element != nil; element = element.Next() {
-		if element.Value.(node).Key == key {
+		if element.Value.(linkedNode).Key == key {
 			return element, true
 		} // if>>
 	} // for>
@@ -60,7 +60,7 @@ func (l *LinkedHashTable) Put(key interface{}, value interface{}) {
 		l.buckets[hashKey] = list.New()
 	} // if>
 
-	element := node{Key: key, Value: value}
+	element := linkedNode{Key: key, Value: value}
 	listElement, exists := l.findInList(key, l.buckets[hashKey])
 	if exists {
 		listElement.Value = element
@@ -80,7 +80,7 @@ func (l *LinkedHashTable) Get(key interface{}) (interface{}, bool) {
 	}
 	listElement, exists := l.findInList(hashKey, l.buckets[hashKey])
 	if exists {
-		return listElement.Value.(node).Value, true
+		return listElement.Value.(linkedNode).Value, true
 	}
 	return nil, false
 }
@@ -112,7 +112,7 @@ func (l *LinkedHashTable) Keys() []interface{} {
 	for _, v := range l.buckets {
 		if v != nil {
 			for element := v.Front(); element != nil; element = element.Next() {
-				keys = append(keys, element.Value.(node).Key)
+				keys = append(keys, element.Value.(linkedNode).Key)
 			} // for>>
 		} // if>>
 	} // for>
@@ -124,7 +124,7 @@ func (l *LinkedHashTable) Values() []interface{} {
 	for _, v := range l.buckets {
 		if v != nil {
 			for element := v.Front(); element != nil; element = element.Next() {
-				values = append(values, element.Value.(node).Value)
+				values = append(values, element.Value.(linkedNode).Value)
 			} // for>>
 		} // if>>
 	} // for>

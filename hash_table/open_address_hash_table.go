@@ -6,7 +6,7 @@ import (
 	"math/big"
 )
 
-type openAddressElement struct {
+type openAddressNode struct {
 	Key    interface{}
 	Value  interface{}
 	exists bool
@@ -14,7 +14,7 @@ type openAddressElement struct {
 
 type OpenAddressHashTable struct {
 	hashTableBase
-	buckets []*openAddressElement
+	buckets []*openAddressNode
 }
 
 func NewOpenAddressHashTable() *OpenAddressHashTable {
@@ -42,7 +42,7 @@ func (o *OpenAddressHashTable) ifExists(key uint32) bool {
 // --- interface func ---
 func (o *OpenAddressHashTable) Init(capacity uint32) {
 	o.hashTableBase.Init(capacity)
-	o.buckets = make([]*openAddressElement, 0, o.Capacity)
+	o.buckets = make([]*openAddressNode, 0, o.Capacity)
 }
 
 func (o *OpenAddressHashTable) Move(capacity uint32) {
@@ -60,7 +60,7 @@ func (o *OpenAddressHashTable) Put(key interface{}, value interface{}) {
 	for i := 0; i < int(o.Capacity); i++ {
 		hashValue := o.hash(key, uint32(i))
 		if o.buckets[hashValue] == nil {
-			o.buckets[hashValue] = &openAddressElement{exists: false}
+			o.buckets[hashValue] = &openAddressNode{exists: false}
 		} // if>
 		exists := o.ifExists(hashValue)
 		if !exists {
@@ -93,7 +93,7 @@ func (o *OpenAddressHashTable) Delete(key interface{}) {
 	for i := 0; i < int(o.Capacity); i++ {
 		hashValue := o.hash(key, uint32(i))
 		if o.buckets[hashValue] != nil && o.buckets[hashValue].Key == key {
-			o.buckets[hashValue] = &openAddressElement{exists: false}
+			o.buckets[hashValue] = &openAddressNode{exists: false}
 			o.Size--
 			return
 		} // if>>
