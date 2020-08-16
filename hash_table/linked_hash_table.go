@@ -1,10 +1,9 @@
 package hash_table
 
 import (
-	"bytes"
 	"container/list"
 	"crypto/sha1"
-	"encoding/gob"
+	"head_first_data_structure_golang/common"
 	"math/big"
 )
 
@@ -33,13 +32,7 @@ func NewLinkedHashTable(capacity uint32) *LinkedHashTable {
 
 // --- inner func ---
 func (l *LinkedHashTable) hash(key interface{}) uint32 {
-	buf := bytes.NewBuffer(nil)
-	enc := gob.NewEncoder(buf)
-	_ = enc.Encode(key)
-	hashMethod := sha1.New()
-	hashBytes := hashMethod.Sum(buf.Bytes())
-	hashValue := new(big.Int).SetBytes(hashBytes)
-
+	hashValue := common.HashFunc(key, sha1.New())
 	capacityValue := big.NewInt(int64(l.capacity))
 	hashValue.Mod(hashValue, capacityValue)
 	return uint32(hashValue.Uint64())

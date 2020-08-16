@@ -3,6 +3,7 @@ package hash_table
 import (
 	"crypto/sha1"
 	"crypto/sha256"
+	"head_first_data_structure_golang/common"
 	"math/big"
 )
 
@@ -13,75 +14,74 @@ type openAddressNode struct {
 }
 
 type OpenAddressHashTable struct {
-	hashTableBase
-	buckets []*openAddressNode
+	buckets  []*openAddressNode
+	capacity uint32
+	size     uint32
 }
 
-func NewOpenAddressHashTable() *OpenAddressHashTable {
+func NewOpenAddressHashTable(capacity uint32) *OpenAddressHashTable {
 	h := new(OpenAddressHashTable)
-	h.hashTableBase.HashTable = h
+	if capacity < defaultMinCapacity {
+		h.capacity = defaultMinCapacity
+		h.buckets = make([]*openAddressNode, defaultMinCapacity)
+	} else {
+		h.capacity = capacity
+		h.buckets = make([]*openAddressNode, capacity)
+	} // else>
 	return h
 }
 
 // --- inner func ---
 func (o *OpenAddressHashTable) hash(key interface{}, i uint32) uint32 {
-	hashValue1, hashValue2 := o.HashFunc(key, sha1.New()), o.HashFunc(key, sha256.New())
-	ib := big.NewInt(int64(i))
-	mb := big.NewInt(int64(o.Capacity))
-	hashValue2.Mul(hashValue2, ib).Add(hashValue2, hashValue1).Mod(hashValue2, mb)
+	hashValue1, hashValue2 := common.HashFunc(key, sha1.New()), common.HashFunc(key, sha256.New())
+	indexValue := big.NewInt(int64(i))
+	capacityValue := big.NewInt(int64(o.capacity))
+	hashValue2.Mul(hashValue2, indexValue).Add(hashValue2, hashValue1).Mod(hashValue2, capacityValue)
 	return uint32(hashValue2.Uint64())
 }
 
-func (o *OpenAddressHashTable) ifExists(key uint32) bool {
-	if o.buckets[key] == nil {
-		return false
-	}
-	return o.buckets[key].exists
+func (o *OpenAddressHashTable) UpScale() {
+	if o.LoadFactor() >= defaultMinLoadFactor {
+		oldBuckets := o.buckets
+		o.capacity = o.capacity << 1
+		o.buckets = make([]*openAddressNode, o.capacity)
+		for i := range oldBuckets {
+			if oldBuckets[i] != nil {
+				o.Put(oldBuckets[i].Key, oldBuckets[i].Value)
+			} // if>>>
+		} // for>>
+	} // if>
 }
 
 // --- interface func ---
-func (o *OpenAddressHashTable) Init(capacity uint32) {
-	o.hashTableBase.Init(capacity)
-	o.buckets = make([]*openAddressNode, 0, o.Capacity)
-}
-
-func (o *OpenAddressHashTable) Move(capacity uint32) {
-	oldBuckets := o.buckets
-	o.Init(capacity)
-	for i := range oldBuckets {
-		if oldBuckets[i] != nil {
-			o.Put(oldBuckets[i].Key, oldBuckets[i].Value)
-		} // if>>
-	} // for>
-}
-
 func (o *OpenAddressHashTable) Put(key interface{}, value interface{}) {
 	o.UpScale()
-	for i := 0; i < int(o.Capacity); i++ {
-		hashValue := o.hash(key, uint32(i))
+	for i := uint32(0); i < o.capacity; i++ {
+		hashValue := o.hash(key, i)
 		if o.buckets[hashValue] == nil {
 			o.buckets[hashValue] = &openAddressNode{exists: false}
-		} // if>
-		exists := o.ifExists(hashValue)
-		if !exists {
+		} // if>>
+		if o.buckets[hashValue] == nil || !o.buckets[hashValue].exists {
+			// new
 			o.buckets[hashValue].Key = key
 			o.buckets[hashValue].Value = value
 			o.buckets[hashValue].exists = true
-			o.Size++
+			o.size++
 			return
-		} else if exists && o.buckets[hashValue].Key == key {
+		} else if o.buckets[hashValue] != nil || o.buckets[hashValue].exists && o.buckets[hashValue].Key == key {
+			// update
 			o.buckets[hashValue].Value = value
 			return
-		}
+		} // else>>
 	} // for>
 }
 
 func (o *OpenAddressHashTable) Get(key interface{}) (interface{}, bool) {
-	if o.Size == 0 {
+	if o.size == 0 {
 		return nil, false
 	}
-	for i := 0; i < int(o.Capacity); i++ {
-		hashValue := o.hash(key, uint32(i))
+	for i := uint32(0); i < o.capacity; i++ {
+		hashValue := o.hash(key, i)
 		if o.buckets[hashValue] != nil && o.buckets[hashValue].Key == key {
 			return o.buckets[hashValue].Value, o.buckets[hashValue].exists
 		} // if>>
@@ -90,12 +90,32 @@ func (o *OpenAddressHashTable) Get(key interface{}) (interface{}, bool) {
 }
 
 func (o *OpenAddressHashTable) Delete(key interface{}) {
-	for i := 0; i < int(o.Capacity); i++ {
-		hashValue := o.hash(key, uint32(i))
+	for i := uint32(0); i < o.capacity; i++ {
+		hashValue := o.hash(key, i)
 		if o.buckets[hashValue] != nil && o.buckets[hashValue].Key == key {
 			o.buckets[hashValue] = &openAddressNode{exists: false}
-			o.Size--
+			o.size--
 			return
 		} // if>>
 	} // for>
+}
+
+func (o *OpenAddressHashTable) LoadFactor() float64 {
+	if o.capacity == 0 {
+		return 1.0
+	}
+	return float64(o.size) / float64(o.capacity)
+}
+
+func (o *OpenAddressHashTable) IfEmpty() bool {
+	return o.size == 0
+}
+
+func (o *OpenAddressHashTable) Size() int {
+	return int(o.size)
+}
+
+func (o *OpenAddressHashTable) Reset() {
+	o.buckets = make([]*openAddressNode, o.capacity)
+	o.size = 0
 }
