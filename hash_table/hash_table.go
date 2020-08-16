@@ -8,10 +8,14 @@ import (
 )
 
 type HashTable interface {
-	Init(capacity uint32)
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (interface{}, bool)
 	Delete(key interface{})
+	Keys() []interface{}
+	Values() []interface{}
+	IfEmpty() bool
+	Size() int
+	Reset()
 }
 
 const (
