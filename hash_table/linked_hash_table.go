@@ -20,10 +20,12 @@ type LinkedHashTable struct {
 }
 
 func NewLinkedHashTable(capacity uint32) *LinkedHashTable {
-	h := &LinkedHashTable{capacity: capacity, size: 0}
+	h := &LinkedHashTable{}
 	if capacity < defaultMinCapacity {
+		h.capacity = defaultMinCapacity
 		h.buckets = make([]*list.List, defaultMinCapacity)
 	} else {
+		h.capacity = capacity
 		h.buckets = make([]*list.List, capacity)
 	} // else>
 	return h
@@ -138,9 +140,6 @@ func (l *LinkedHashTable) Size() int {
 }
 
 func (l *LinkedHashTable) Reset() {
-	if l.capacity == 0 {
-		l.buckets = nil
-	} else {
-		l.buckets = make([]*list.List, l.capacity)
-	} // else>
+	l.buckets = make([]*list.List, l.capacity)
+	l.size = 0
 }
