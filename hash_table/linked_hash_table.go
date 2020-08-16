@@ -8,8 +8,6 @@ import (
 	"math/big"
 )
 
-const defaultMinCapacity = 8
-
 type node struct {
 	Key   interface{}
 	Value interface{}
@@ -23,8 +21,8 @@ type LinkedHashTable struct {
 
 func NewLinkedHashTable(capacity uint32) *LinkedHashTable {
 	h := &LinkedHashTable{capacity: capacity, size: 0}
-	if capacity == 0 {
-		h.buckets = nil
+	if capacity < defaultMinCapacity {
+		h.buckets = make([]*list.List, defaultMinCapacity)
 	} else {
 		h.buckets = make([]*list.List, capacity)
 	} // else>
@@ -93,14 +91,14 @@ func (l *LinkedHashTable) Delete(key interface{}) {
 	listElement, exists := l.findInList(key, l.buckets[hashKey])
 	if exists {
 		l.buckets[hashKey].Remove(listElement)
+		l.size--
 	}
 	if l.buckets[hashKey].Len() == 0 {
 		l.buckets[hashKey] = nil
-		l.size--
 	}
 }
 
-func (l *LinkedHashTable) Load() float64 {
+func (l *LinkedHashTable) LoadFactor() float64 {
 	if l.capacity == 0 {
 		return 1.0
 	}
@@ -108,18 +106,26 @@ func (l *LinkedHashTable) Load() float64 {
 }
 
 func (l *LinkedHashTable) Keys() []interface{} {
-	keys := make([]interface{}, 0, s.Size())
-	for k := range s.data {
-		keys = append(keys, k)
-	}
+	keys := make([]interface{}, 0, l.size)
+	for _, v := range l.buckets {
+		if v != nil {
+			for element := v.Front(); element != nil; element = element.Next() {
+				keys = append(keys, element.Value.(node).Key)
+			} // for>>
+		} // if>>
+	} // for>
 	return keys
 }
 
 func (l *LinkedHashTable) Values() []interface{} {
-	values := make([]interface{}, 0, s.Size())
-	for _, v := range s.data {
-		values = append(values, v)
-	}
+	values := make([]interface{}, 0, l.size)
+	for _, v := range l.buckets {
+		if v != nil {
+			for element := v.Front(); element != nil; element = element.Next() {
+				values = append(values, element.Value.(node).Value)
+			} // for>>
+		} // if>>
+	} // for>
 	return values
 }
 

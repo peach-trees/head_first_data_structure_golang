@@ -21,7 +21,7 @@ func (s *StandardHashTable) Delete(key interface{}) {
 	delete(s.data, key)
 }
 
-func (s *StandardHashTable) Load() float64 {
+func (s *StandardHashTable) LoadFactor() float64 {
 	return 1
 }
 
