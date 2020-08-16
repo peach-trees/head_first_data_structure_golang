@@ -21,6 +21,10 @@ func (s *StandardHashTable) Delete(key interface{}) {
 	delete(s.data, key)
 }
 
+func (s *StandardHashTable) Load() float64 {
+	return 1
+}
+
 func (s *StandardHashTable) Keys() []interface{} {
 	keys := make([]interface{}, 0, s.Size())
 	for k := range s.data {

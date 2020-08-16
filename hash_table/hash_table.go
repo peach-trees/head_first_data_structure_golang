@@ -11,6 +11,7 @@ type HashTable interface {
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (interface{}, bool)
 	Delete(key interface{})
+	Load() float64
 	Keys() []interface{}
 	Values() []interface{}
 	IfEmpty() bool
