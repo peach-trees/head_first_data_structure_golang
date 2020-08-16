@@ -12,9 +12,6 @@ type HashTable interface {
 	Put(key interface{}, value interface{})
 	Get(key interface{}) (interface{}, bool)
 	Delete(key interface{})
-
-	UpScale()
-	Move(capacity uint32)
 }
 
 const (

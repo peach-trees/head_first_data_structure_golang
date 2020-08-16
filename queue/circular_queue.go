@@ -2,7 +2,6 @@ package queue
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 )
 
@@ -53,13 +52,13 @@ func (d *CircularQueue) String() string {
 	return retBytes.String()
 }
 
-func (d *CircularQueue) Enqueue(value interface{}) error {
+func (d *CircularQueue) Enqueue(value interface{}) {
 	if d.IfFull() {
-		return errors.New("CircularQueue is full")
+		return
 	}
 	d.data[d.tail] = value
 	d.tail = (d.tail + 1) % d.capacity
-	return nil
+	return
 }
 
 func (d *CircularQueue) Dequeue() (interface{}, bool) {

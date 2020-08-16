@@ -30,6 +30,33 @@ func (l *LinkedList) checkIndex(index int) bool {
 	return index >= 0 && index < l.size
 }
 
+func (l *LinkedList) Append(values ...interface{}) {
+	tail := l.head
+	for tail != nil && tail.next != nil {
+		tail = tail.next
+	} // for>
+
+	for i := range values {
+		newNode := &LinkedListNode{data: values[i]}
+		if tail == nil {
+			l.head = newNode
+			tail = newNode
+		} else {
+			tail.next = newNode
+			tail = newNode
+		} // else>>
+		l.size++
+	} // for>
+}
+
+func (l *LinkedList) Prepend(values ...interface{}) {
+	for i := len(values) - 1; i >= 0; i-- {
+		newNode := &LinkedListNode{data: values[i], next: l.head}
+		l.head = newNode
+		l.size++
+	} // for>
+}
+
 func (l *LinkedList) Get(index int) (interface{}, bool) {
 	if !l.checkIndex(index) {
 		return nil, false
@@ -78,33 +105,6 @@ func (l *LinkedList) Delete(index int) {
 		pre.next = cur.next
 	} // else>
 	l.size--
-}
-
-func (l *LinkedList) Append(values ...interface{}) {
-	tail := l.head
-	for tail != nil && tail.next != nil {
-		tail = tail.next
-	} // for>
-
-	for i := range values {
-		newNode := &LinkedListNode{data: values[i]}
-		if tail == nil {
-			l.head = newNode
-			tail = newNode
-		} else {
-			tail.next = newNode
-			tail = newNode
-		} // else>>
-		l.size++
-	} // for>
-}
-
-func (l *LinkedList) Prepend(values ...interface{}) {
-	for i := len(values) - 1; i >= 0; i-- {
-		newNode := &LinkedListNode{data: values[i], next: l.head}
-		l.head = newNode
-		l.size++
-	} // for>
 }
 
 func (l *LinkedList) Insert(index int, value interface{}) {
